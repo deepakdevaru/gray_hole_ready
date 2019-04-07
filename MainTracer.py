@@ -4,13 +4,12 @@ from collections import defaultdict
 from collections import defaultdict
 import length
 import os
-import shutil
-
-def move(src,dst):
-        shutil.move(src,dst)
 
 
-filename = "out.tr"
+
+
+
+filename = "/Users/deepakjoshi/Desktop/Project/parser/tr files/4.tr"
 with open(filename, 'r') as file:
     linecontents = file.readlines()
 
@@ -108,9 +107,7 @@ with open("RTRs.csv",'r') as readfile:
                                 for i in packet_received:
                                         if i not in packet_dropped:
                                                 packet_dropped[i] = 0
-                                print(packet_received)
-                                print(packet_forward)
-                                print(packet_dropped)
+
                                 for dicts in dict_final:
                                         for k, v in dicts.items():
                                                 merged_dict[k].append(v)
@@ -130,3 +127,19 @@ readfile.close()
 os.remove(filename2)
 
 
+import pandas as pd
+filename3 = "Stage1.csv"
+label = ["Node", "Packetreceived", "packetforwarded", "packetdropped"]
+dataset = pd.read_csv(filename3, delimiter='\t', names=label)
+dataset = pd.DataFrame(dataset)
+
+dataset.drop_duplicates(inplace=True)
+dataset.dropna(axis=0, how="any", inplace=True)
+dataset["Packet Drop Ratio"] = dataset["packetdropped"] / dataset["Packetreceived"]
+dataset["Packet Drop Ratio"] = dataset["Packet Drop Ratio"].round(3)
+
+with open("Cleaned.csv", "a") as f:
+        dataset.to_csv(f, header=False, index=False)
+
+f.close()
+os.remove(filename3)
